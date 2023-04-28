@@ -8,27 +8,31 @@ _Copy this recipe template to design and create two related database tables from
 # EXAMPLE USER STORY:
 # (analyse only the relevant part - here the final line).
 
-As a coach
-So I can get to know all students
-I want to see a list of students' names.
+As a blogger
+So I can write interesting stuff
+I want to write posts having a title.
 
-As a coach
-So I can get to know all students
-I want to see a list of cohorts' names.
+As a blogger
+So I can write interesting stuff
+I want to write posts having a content.
 
-As a coach
-So I can get to know all students
-I want to see a list of cohorts' starting dates.
+As a blogger
+So I can let people comment on interesting stuff
+I want to allow comments on my posts.
 
-As a coach
-So I can get to know all students
-I want to see a list of students' cohorts.
+As a blogger
+So I can let people comment on interesting stuff
+I want the comments to have a content.
+
+As a blogger
+So I can let people comment on interesting stuff
+I want the author to include their name in comments.
 ```
 
 ```
 Nouns:
 
-student names, cohort names, cohorts' starting date
+posts, title, content, comments, content, author name, post id
 ```
 
 ## 2. Infer the Table Name and Columns
@@ -37,16 +41,16 @@ Put the different nouns in this table. Replace the example with your own nouns.
 
 | Record                | Properties          |
 | --------------------- | ------------------  |
-| students              | name
-| cohort                | name, startting_date
+| posts                 | title, content
+| comments              | content, author_name, post_id
 
-1. Name of the first table (always plural): `student` 
+1. Name of the first table (always plural): `posts` 
 
-    Column names: `name`
+    Column names: `title`, `content`
 
-2. Name of the second table (always plural): `cohorts` 
+2. Name of the second table (always plural): `comments` 
 
-    Column names: `name`, `starting_date`
+    Column names: `content`, `author_name`, `post_id`
 
 ## 3. Decide the column types.
 
@@ -61,12 +65,14 @@ Remember to **always** have the primary key `id` as a first column. Its type wil
 
 Table: albums
 id: SERIAL
-name: text
+title: text
+content:  text
 
 Table: artists
 id: SERIAL
-name: text
-starting_date: date
+content: text
+author_name: text
+post_id: int
 ```
 
 ## 4. Decide on The Tables Relationship
@@ -89,12 +95,10 @@ Replace the relevant bits in this example with your own:
 ```
 # EXAMPLE
 
-Can a student have many cohorts? NO
-Can a cohort have many students? YES
+Can one post have many comments? YES
+Can one comment have many posts? NO
 
-Student -> many to one -> cohort
-
-The foreign key is on students (cohort_id)
+The foreign key is on comments table
 ```
 
 *If you can answer YES to the two questions, you'll probably have to implement a Many-to-Many relationship, which is more complex and needs a third table (called a join table).*
@@ -103,24 +107,25 @@ The foreign key is on students (cohort_id)
 
 ```sql
 -- EXAMPLE
--- file: albums_table.sql
+-- file: blog_table.sql
 
 -- Replace the table name, columm names and types.
 
 -- Create the table without the foreign key first.
-CREATE TABLE cohorts (
+CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
-  name text,
-  starting_date date
+  title text,
+  content text
 );
 
 -- Then the table with the foreign key first.
 CREATE TABLE students (
   id SERIAL PRIMARY KEY,
-  name text,
+  content text,
+  author_name text,
+  post_id int,
 -- The foreign key name is always {other_table_singular}_id
-  cohort_id int,
-  constraint fk_cohort foreign key(cohort_id) references cohorts(id)
+  constraint fk_post foreign key(post_id) references posts(id)
 );
 ```
 
